@@ -11,3 +11,5 @@ weights/RapLyrics_word2_01_config.json
 weights/RapLyrics_word2_01_vocab.json
 weights/RapLyrics_word2_01_weights.hdf5
 temp.txt
+/weights/Trainings/*
+
