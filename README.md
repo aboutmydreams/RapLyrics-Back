@@ -1,7 +1,12 @@
 # RapLyrics-Back
 Part of the [raplyrics.eu](raplyrics.eu) project: generate powerful AI-powered rap lyrics. 
 
-INSERT GIF OF A GENERATION WITH CURL
+<p align="center"> 
+<a href="https://raplyrics.eu">
+
+![lyrics generation with curl](/doc/lyrics_sample.gif)
+</a>
+</p>
 
 This repository contains: 
 - a hand-curated, human-cleaned rap lyrics dataset 
@@ -10,16 +15,17 @@ This repository contains:
 
 ## Getting started  
 ### Setup
-Get the repo. Clone from GitLab:  
+Get the repo. Clone from GitHub:  
     
-    $ git clone git@gitlab.com:cyrilou242/RapLyrics-Back.git  
+    $ git clone https://github.com/cyrilou242/RapLyrics-Back  
     
-Setup a virtualenv and install the required librairies.
+Setup a virtualenv and install the required libraries.
 
-**Note**: Make sure you have a `python --version` >= `python3.6` otherwise upgrade to `3.6`.
+**Note**: Make sure you have a `python --version` == `python3.6` otherwise some library (especially `tensorflow` may not 
+be available or behave as expected)
     
     $ cd RapLyrics-Back  
-    $ mkvirtualenv --python `which python3` -r requirements.txt RapLyrics_Back  
+    $ mkvirtualenv --python `which python3.6` -r requirements.txt RapLyrics_Back  
     
 ###  Train the model
 The training is based on [minimaxir's textgenrnn](https://github.com/minimaxir/textgenrnn) with small pre-processing tweaks.
@@ -74,4 +80,3 @@ For further serving in production, use a production WSGI server. We recommend gu
 
 # Next steps:
 - Further researches and testing with character level  models. Seems very promising.
-- Clean and rewrite for easy newcomers.
