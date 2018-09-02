@@ -4,7 +4,7 @@ Part of the [raplyrics.eu](raplyrics.eu) project: generate powerful AI-powered r
 <p align="center"> 
 <a href="https://raplyrics.eu">
 
-![lyrics generation with curl](/doc/lyrics_sample.gif)
+![lyrics generation with curl](/doc/curl.gif)
 </a>
 </p>
 
