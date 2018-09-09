@@ -1,5 +1,5 @@
 # RapLyrics-Back
-Part of the [raplyrics.eu](raplyrics.eu) project: generate powerful AI-powered rap lyrics. 
+Part of the [raplyrics.eu](https://www.raplyrics.eu/?utm_source=github.com&utm_medium=github-readme&utm_campaign=github-back) project: generate powerful AI-powered rap lyrics. 
 
 <p align="center"> 
 <a href="https://raplyrics.eu">
