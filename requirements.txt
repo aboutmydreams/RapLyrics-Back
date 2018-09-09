@@ -10,6 +10,7 @@ Flask==1.0.2
 Flask-Cors==3.0.6
 gast==0.2.0
 grpcio==1.14.0
+gunicorn==19.9.0
 h5py==2.8.0
 html5lib==1.0.1
 ipykernel==4.8.2
