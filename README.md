@@ -34,9 +34,9 @@ The development of this library is still active, you may want to use it instead 
     $ rm -r textgenrnn  
     $ pip install textgenrnn    
     
-[train.py](train.py) contains 2 sample code to train a model.  
-Have a look at it and launch your own training.    
-Don't change anything to train from the [rap lyric dataset](datasets/rapus_generalist_augmented.txt) provided.  
+[train.py](train.py) contains the parameters and the path of the training dataset.  
+Have a look at it and launch your own training.
+Don't change anything to train from the [rap lyric dataset](datasets/rapus_generalist_augmented.txt) provided. This will create a word model and a char model.  
 
 **Parameters available**:   
 *new_model*: True to create a new model or False to train based on an existing one.  
