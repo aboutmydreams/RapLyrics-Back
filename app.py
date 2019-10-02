@@ -1,4 +1,5 @@
 import re
+import os
 import random
 import json
 
@@ -6,24 +7,23 @@ from flask import Response
 from werkzeug.datastructures import Headers
 
 from fasttextgenrnn import textgenrnn
-from google.cloud import storage
 
 # We keep model as global variable so we don't have to reload it in case of warm invocations
 # Model load which only happens during cold starts
 
-weights_path = '/tmp/RapLyrics_word2_01_weights.hdf5'
-storage_client = storage.Client()
-bucket = storage_client.get_bucket('cloud_function_asset')
-weights_blob = bucket.blob('weights/RapLyrics_word2_01_weights.hdf5')
-weights_blob.download_to_filename('/tmp/RapLyrics_word2_01_weights.hdf5')
-config_blob = bucket.get_blob('weights/RapLyrics_word2_01_config.json')
-vocab_blob = bucket.get_blob('weights/RapLyrics_word2_01_vocab.json')
+
+CUR_DIR = os.path.dirname(os.path.abspath(__file__))
+WEIGHTS_DIR = os.path.join(CUR_DIR, "weights")
+
+WEIGHTS_PATH = os.path.join(WEIGHTS_DIR, 'RapLyrics_word2_01_weights.hdf5')
+CONFIG_PATH = os.path.join(WEIGHTS_DIR, "weights/RapLyrics_word2_01_config.json")
+VOCAB_PATH = os.path.join(WEIGHTS_DIR, "RapLyrics_word2_01_vocab.json")
 
 
-textgen = textgenrnn(config_stream=config_blob.download_as_string(),
-                     vocab_stream=vocab_blob.download_as_string(),
-                     weights_path=weights_path)
-#textgen.generate()  # resolved a memory addressing bug of keras, DO NOT remove
+textgen = textgenrnn(config_path=CONFIG_PATH,
+                     vocab_path=VOCAB_PATH,
+                     weights_path=WEIGHTS_PATH)
+
 
 regex1 = re.compile(r"\n+ ?") # to avoid recompiling in hot start
 

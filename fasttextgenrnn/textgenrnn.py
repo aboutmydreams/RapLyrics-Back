@@ -18,18 +18,18 @@ class textgenrnn:
     default_config = config.copy()
 
     def __init__(self, weights_path,
-                 vocab_stream,
-                 config_stream,
+                 vocab_path,
+                 config_path,
                  name="textgenrnn"):
 
-        #with open(config_path, 'r', encoding='utf8', errors='ignore') as json_file:
-        self.config = json.loads(config_stream.decode('utf-8'))
+        with open(config_path, 'r', encoding='utf8', errors='ignore') as json_file:
+            self.config = json.load(json_file)
 
         self.config.update({'name': name})
         self.default_config.update({'name': name})
 
-        #(vocab_path, 'r', encoding = 'utf8', errors = 'ignore')
-        self.vocab = json.loads(vocab_stream.decode('utf-8'))
+        with open(vocab_path, 'r', encoding='utf8', errors='ignore') as json_file:
+            self.vocab = json.load(json_file)
 
         self.tokenizer = Tokenizer(filters='', char_level=True)
         self.tokenizer.word_index = self.vocab
@@ -71,4 +71,3 @@ class textgenrnn:
     def reset(self):
         self.config = self.default_config.copy()
         self.__init__(name=self.config['name'])
-
