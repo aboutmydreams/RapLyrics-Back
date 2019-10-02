@@ -4,11 +4,12 @@ from keras import backend as K
 import numpy as np
 import json
 
+
 def textgenrnn_sample(preds, temperature):
-    '''
+    """
     Samples predicted probabilities of the next character to allow
     for the network to show "creativity."
-    '''
+    """
 
     preds = np.asarray(preds).astype('float64')
 
@@ -28,20 +29,21 @@ def textgenrnn_sample(preds, temperature):
 
     return index
 
+
 def textgenrnn_generate(model, vocab,
                         indices_char, prefix=None, temperature=0.5,
                         maxlen=40, meta_token='<s>',
                         word_level=True,
                         single_text=False,
                         max_gen_length=300):
-    '''
+    """
     Generates and returns a single text.
-    '''
+    """
     # If generating word level, must add spaces around each punctuation.
     # https://stackoverflow.com/a/3645946/9314418
-    #FIXME: punctuation processing may be removed depending on choice we make @LyricsVindicator
-    #FIXME: in fact except for "'", all other punctuations may be removed when coming from api call
-    #if word_level and prefix:
+    # FIXME: punctuation processing may be removed depending on choice we make @LyricsVindicator
+    # FIXME: in fact except for "'", all other punctuations may be removed when coming from api call
+    # if word_level and prefix:
     #    punct = '!"#$%&()*+,-./:;<=>?@[\]^_`{|}~\\n\\t\'‘’“”’–—'
     #    prefix = re.sub('([{}])'.format(punct), r' \1 ', prefix)
 
@@ -91,20 +93,20 @@ def textgenrnn_generate(model, vocab,
 
 
 def textgenrnn_encode_sequence(text, vocab, maxlen):
-    '''
+    """
     Encodes a text into the corresponding encoding for prediction with
     the model.
-    '''
+    """
 
     encoded = np.array([vocab.get(x, 0) for x in text])
     return sequence.pad_sequences([encoded], maxlen=maxlen)
 
 
 def textgenrnn_encode_cat(chars, vocab):
-    '''
+    """
     One-hot encodes values at given chars efficiently by preallocating
     a zeros matrix.
-    '''
+    """
 
     a = np.float32(np.zeros((len(chars), len(vocab) + 1)))
     rows, cols = zip(*[(i, vocab.get(char, 0))
@@ -116,6 +118,5 @@ def textgenrnn_encode_cat(chars, vocab):
 def model_input_count(model):
     if isinstance(model.input, list):
         return len(model.input)
-    else:   # is a Tensor
+    else:  # is a Tensor
         return model.input.shape[0]
-

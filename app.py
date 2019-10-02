@@ -1,10 +1,9 @@
 import re
 import os
 import random
-import json
 
-from flask import Response
-from werkzeug.datastructures import Headers
+from flask import Flask, request, jsonify
+from flask_cors import CORS
 
 from fasttextgenrnn import textgenrnn
 
@@ -12,21 +11,23 @@ from fasttextgenrnn import textgenrnn
 # Model load which only happens during cold starts
 
 
+cloud_runner_lyricist = Flask(__name__)
+CORS(cloud_runner_lyricist, resources={r"/*": {"origins": "*"}})
+
 CUR_DIR = os.path.dirname(os.path.abspath(__file__))
 WEIGHTS_DIR = os.path.join(CUR_DIR, "weights")
 
-WEIGHTS_PATH = os.path.join(WEIGHTS_DIR, 'RapLyrics_word2_01_weights.hdf5')
-CONFIG_PATH = os.path.join(WEIGHTS_DIR, "weights/RapLyrics_word2_01_config.json")
+WEIGHTS_PATH = os.path.join(WEIGHTS_DIR, "RapLyrics_word2_01_weights.hdf5")
+CONFIG_PATH = os.path.join(WEIGHTS_DIR, "RapLyrics_word2_01_config.json")
 VOCAB_PATH = os.path.join(WEIGHTS_DIR, "RapLyrics_word2_01_vocab.json")
-
 
 textgen = textgenrnn(config_path=CONFIG_PATH,
                      vocab_path=VOCAB_PATH,
                      weights_path=WEIGHTS_PATH)
 
+textgen.generate()
 
-regex1 = re.compile(r"\n+ ?") # to avoid recompiling in hot start
-
+regex1 = re.compile(r"\n+ ?")  # to avoid recompiling in hot start
 
 """Implements function used for lyrics generation in production"""
 
@@ -79,7 +80,7 @@ def lyrics_generator(textgen, prefix, temperatures=[0.4, 0.5, 0.6], num_line=10,
             prefix = None
 
         # Determine temperature
-        temperature = temperatures[i+1]
+        temperature = temperatures[i + 1]
 
         # Generate new line
         new_line = textgen.generate(prefix=prefix, return_as_list=True, n=1, temperature=temperature)[0]
@@ -94,7 +95,13 @@ def lyrics_generator(textgen, prefix, temperatures=[0.4, 0.5, 0.6], num_line=10,
     return text
 
 
-def handler(request):
+@cloud_runner_lyricist.route('/')
+def hello():
+    return "Cloud Runner Lyricist"
+
+
+@cloud_runner_lyricist.route('/predict', methods=["POST"])
+def handler():
     """ Responds to an HTTP request using data from the request body parsed
         according to the "content-type" header.
         Args:
@@ -116,7 +123,7 @@ def handler(request):
             'Access-Control-Allow-Headers': 'Content-Type',
             'Access-Control-Max-Age': '3600'
         }
-        return ('', 204, headers)
+        return '', 204, headers
 
     content_type = request.headers['content-type']
     if content_type == 'application/json':
@@ -142,15 +149,8 @@ def handler(request):
                                   temperatures=[0.5, 0.6, 0.7], num_line=5,
                                   prefix_mode=2, prefix_proba=0.5)
 
-    # 4. process the output
-    lyrics = {"output": prediction}
+    return jsonify({"output": prediction})
 
-    # prepare header
-    header = Headers()
-    header.add('Access-Control-Allow-Origin', '*')
-    header.add("Content-Type", "application/json")
 
-    resp = Response(json.dumps(lyrics), headers=header)
-
-    # 5. return the output for the api
-    return resp
+if __name__ == "__main__":
+    cloud_runner_lyricist.run(debug=True, host='0.0.0.0', port=int(os.environ.get('PORT', 8080)))
