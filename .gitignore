@@ -1,4 +1,5 @@
 .DS_Store
+CloudVenv
 model/.DS_Store
 .idea/
 __pycache__/
