@@ -5,7 +5,10 @@ FROM python:3.7-slim
 # Copy local code to the container image.
 ENV APP_HOME /app
 WORKDIR $APP_HOME
-COPY . ./
+COPY app.py ./
+COPY ./weights/ /app/weights/
+COPY ./fasttextgenrnn/ /app/fasttextgenrnn/
+
 
 # Install production dependencies.
 RUN pip install -r requirements.txt
