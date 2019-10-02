@@ -11,8 +11,8 @@ from fasttextgenrnn import textgenrnn
 # Model load which only happens during cold starts
 
 
-cloud_runner_lyricist = Flask(__name__)
-CORS(cloud_runner_lyricist, resources={r"/*": {"origins": "*"}})
+app = Flask(__name__)
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 CUR_DIR = os.path.dirname(os.path.abspath(__file__))
 WEIGHTS_DIR = os.path.join(CUR_DIR, "weights")
@@ -95,12 +95,12 @@ def lyrics_generator(textgen, prefix, temperatures=[0.4, 0.5, 0.6], num_line=10,
     return text
 
 
-@cloud_runner_lyricist.route('/')
+@app.route('/')
 def hello():
     return "Cloud Runner Lyricist"
 
 
-@cloud_runner_lyricist.route('/predict', methods=["POST"])
+@app.route('/predict', methods=["POST"])
 def handler():
     """ Responds to an HTTP request using data from the request body parsed
         according to the "content-type" header.
@@ -153,4 +153,4 @@ def handler():
 
 
 if __name__ == "__main__":
-    cloud_runner_lyricist.run(debug=True, host='0.0.0.0', port=int(os.environ.get('PORT', 8080)))
+    app.run(debug=True, host='0.0.0.0', port=int(os.environ.get('PORT', 8080)))
