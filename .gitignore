@@ -13,3 +13,4 @@ weights/RapLyrics_word2_01_weights.hdf5
 temp.txt
 /weights/Trainings/*
 
+CloudVenv/
