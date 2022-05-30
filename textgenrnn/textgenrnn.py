@@ -63,7 +63,7 @@ class textgenrnn:
         self.model = textgenrnn_model(self.num_classes,
                                       cfg=self.config,
                                       weights_path=weights_path)
-        self.indices_char = dict((self.vocab[c], c) for c in self.vocab)
+        self.indices_char = {self.vocab[c]: c for c in self.vocab}
 
     def generate(self, n=1, return_as_list=False, prefix=None,
                  temperature=0.5, max_gen_length=300):
@@ -205,21 +205,10 @@ class textgenrnn:
         self.config = self.default_config.copy()
         self.config.update(**kwargs)
 
-        print("Training new model w/ {}-layer, {}-cell {}LSTMs".format(
-            self.config['rnn_layers'], self.config['rnn_size'],
-            'Bidirectional ' if self.config['rnn_bidirectional'] else ''
-        ))
+        print(
+            f"Training new model w/ {self.config['rnn_layers']}-layer, {self.config['rnn_size']}-cell {'Bidirectional ' if self.config['rnn_bidirectional'] else ''}LSTMs"
+        )
 
-        # If training word level, must add spaces around each punctuation.
-        # https://stackoverflow.com/a/3645946/9314418
-
-        if self.config['word_level']:
-            #FIXME removed the punctuation processing, we consider that it is already done @LyricsVindicator
-            pass
-            #punct = '!"#$%&()*+,-./:;<=>?@[\]^_`{|}~\\n\\t\'‘’“”’–—'
-            #for i in range(len(texts)):
-            #    texts[i] = re.sub('([{}])'.format(punct), r' \1 ', texts[i])
-            #    texts[i] = re.sub(' {2,}', ' ', texts[i])
 
         # Create text vocabulary for new texts
         self.tokenizer = Tokenizer(filters='',
@@ -236,7 +225,7 @@ class textgenrnn:
                 self.tokenizer.word_index) + 1
         self.vocab = self.tokenizer.word_index
         self.num_classes = len(self.vocab) + 1
-        self.indices_char = dict((self.vocab[c], c) for c in self.vocab)
+        self.indices_char = {self.vocab[c]: c for c in self.vocab}
 
         # Create a new, blank model w/ given params
         self.model = textgenrnn_model(self.num_classes,
@@ -244,12 +233,10 @@ class textgenrnn:
                                       cfg=self.config)
 
         # Save the files needed to recreate the model
-        with open('{}_vocab.json'.format(self.config['name']),
-                  'w', encoding='utf8') as outfile:
+        with open(f"{self.config['name']}_vocab.json", 'w', encoding='utf8') as outfile:
             json.dump(self.tokenizer.word_index, outfile, ensure_ascii=False)
 
-        with open('{}_config.json'.format(self.config['name']),
-                  'w', encoding='utf8') as outfile:
+        with open(f"{self.config['name']}_config.json", 'w', encoding='utf8') as outfile:
             json.dump(self.config, outfile, ensure_ascii=False)
 
         self.train_on_texts(texts, new_model=True,
@@ -324,7 +311,7 @@ class textgenrnn:
         for text in texts:
             if self.config['word_level']:
                 text = text_to_word_sequence(text, filters='')
-            text_aug = [self.META_TOKEN] + list(text[0:maxlen])
+            text_aug = [self.META_TOKEN] + list(text[:maxlen])
             encoded_text = textgenrnn_encode_sequence(text_aug, self.vocab,
                                                       maxlen)
             encoded_vector = vector_output.predict(encoded_text)

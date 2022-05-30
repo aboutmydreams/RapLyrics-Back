@@ -61,11 +61,10 @@ def textgenrnn_generate(model, vocab,
         else:
             text = list(prefix) if prefix else ['']
         max_gen_length += maxlen
+    elif word_level:
+        text = [meta_token] + prefix.split() if prefix else [meta_token]
     else:
-        if word_level:
-            text = [meta_token] + prefix.split() if prefix else [meta_token]
-        else:
-            text = [meta_token] + list(prefix) if prefix else [meta_token]
+        text = [meta_token] + list(prefix) if prefix else [meta_token]
     next_char = ''
 
     if not isinstance(temperature, list):
@@ -88,11 +87,7 @@ def textgenrnn_generate(model, vocab,
 
     # if single text, ignore sequences generated w/ padding
     # if not single text, strip the <s> meta_tokens
-    if single_text:
-        text = text[maxlen:]
-    else:
-        text = text[1:-1]
-
+    text = text[maxlen:] if single_text else text[1:-1]
     text_joined = collapse_char.join(text)
 
     # If word level, remove spaces around punctuation for cleanliness.
@@ -100,11 +95,11 @@ def textgenrnn_generate(model, vocab,
         #     left_punct = "!%),.:;?@]_}\\n\\t'"
         #     right_punct = "$([_\\n\\t'"
         punct = '\\n\\t'
-        text_joined = re.sub(" ([{}]) ".format(punct), r'\1', text_joined)
-        #     text_joined = re.sub(" ([{}])".format(
-        #       left_punct), r'\1', text_joined)
-        #     text_joined = re.sub("([{}]) ".format(
-        #       right_punct), r'\1', text_joined)
+        text_joined = re.sub(f" ([{punct}]) ", r'\1', text_joined)
+            #     text_joined = re.sub(" ([{}])".format(
+            #       left_punct), r'\1', text_joined)
+            #     text_joined = re.sub("([{}]) ".format(
+            #       right_punct), r'\1', text_joined)
 
     return text_joined
 
@@ -129,10 +124,8 @@ def textgenrnn_texts_from_file(file_path, header=True,
         if header:
             f.readline()
         if is_csv:
-            texts = []
             reader = csv.reader(f)
-            for row in reader:
-                texts.append(row[0])
+            texts = [row[0] for row in reader]
         else:
             texts = [line.rstrip(delim) for line in f]
 
@@ -197,4 +190,4 @@ class save_model_weights(Callback):
         if model_input_count(self.model) > 1:
             self.model = Model(inputs=self.model.input[0],
                                outputs=self.model.output[1])
-        self.model.save_weights("{}_weights.hdf5".format(self.weights_name))
+        self.model.save_weights(f"{self.weights_name}_weights.hdf5")

@@ -42,7 +42,7 @@ def generate_sequences_from_texts(texts, indices_list,
             if end_index > max_length:
                 x = text[end_index - max_length: end_index + 1]
             else:
-                x = text[0: end_index + 1]
+                x = text[:end_index + 1]
             y = text[end_index + 1]
 
             if y in textgenrnn.vocab:

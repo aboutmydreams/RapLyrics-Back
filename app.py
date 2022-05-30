@@ -39,8 +39,7 @@ def api():
     input_data = request.form['input']
     # print("Input data : ", input_data)
     output_data = model_api(input_data)
-    response = jsonify(output_data)
-    return response
+    return jsonify(output_data)
 
 
 if __name__ == '__main__':

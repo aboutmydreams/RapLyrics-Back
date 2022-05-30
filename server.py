@@ -32,10 +32,7 @@ def get_model_api():
                                               temperatures=temperatures, num_line=num_line,
                                               prefix_mode=prefix_mode, prefix_proba=prefix_proba)
 
-        # 4. process the output
-        output_data = {"output": prediction}
-
         # 5. return the output for the api
-        return output_data
+        return {"output": prediction}
 
     return model_api

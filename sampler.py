@@ -12,10 +12,7 @@ def output_cleaner(text):
     :param text: text to clean
     :return: cleaned text
     """
-    regex_patterns = []
-    regex_patterns.append(("\n ", "\n"))  # space at beginning of line
-    regex_patterns.append(("\n{2,}", "\n"))  # multiple newlines
-    regex_patterns.append(("i ' m", "i'm"))  # i ' m -->i'm
+    regex_patterns = [("\n ", "\n"), ("\n{2,}", "\n"), ("i ' m", "i'm")]
     for (p, r) in regex_patterns:
         text = re.sub(re.compile(p), r, text)
 
@@ -44,9 +41,9 @@ def lyrics_generator(textgen, prefix, temperatures=[0.4, 0.5, 0.6], num_line=10,
     line_list = textgen.generate(prefix=prefix, return_as_list=True, n=1, temperature=temperature)
 
     # Manage empty prefix #FIXME to validate, maybe put elsewhere, or default to None?
-    prefix = prefix if prefix else ""
+    prefix = prefix or ""
 
-    for i in range(num_line - 1):
+    for _ in range(num_line - 1):
         # Determine prefix mode if mode 2
         if prefix_mode == 2:
             prefix_mode = random.choices([0, 1], weights=[prefix_proba, 1 - prefix_proba])[0]

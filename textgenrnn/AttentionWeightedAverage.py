@@ -21,9 +21,10 @@ class AttentionWeightedAverage(Layer):
         self.input_spec = [InputSpec(ndim=3)]
         assert len(input_shape) == 3
 
-        self.W = self.add_weight(shape=(input_shape[2], 1),
-                                 name='{}_W'.format(self.name),
-                                 initializer=self.init)
+        self.W = self.add_weight(
+            shape=(input_shape[2], 1), name=f'{self.name}_W', initializer=self.init
+        )
+
         self.trainable_weights = [self.W]
         super(AttentionWeightedAverage, self).build(input_shape)
 
@@ -59,7 +60,4 @@ class AttentionWeightedAverage(Layer):
         return (input_shape[0], output_len)
 
     def compute_mask(self, input, input_mask=None):
-        if isinstance(input_mask, list):
-            return [None] * len(input_mask)
-        else:
-            return None
+        return [None] * len(input_mask) if isinstance(input_mask, list) else None

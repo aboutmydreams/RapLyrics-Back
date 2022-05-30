@@ -70,22 +70,31 @@ https://github.com/keras-team/keras/issues/8860
 def new_rnn(cfg, layer_num):
     has_gpu = len(K.tensorflow_backend._get_available_gpus()) > 0
     if has_gpu:
-        if cfg['rnn_bidirectional']:
-            return Bidirectional(CuDNNLSTM(cfg['rnn_size'],
-                                           return_sequences=True),
-                                 name='rnn_{}'.format(layer_num))
+        return (
+            Bidirectional(
+                CuDNNLSTM(cfg['rnn_size'], return_sequences=True),
+                name=f'rnn_{layer_num}',
+            )
+            if cfg['rnn_bidirectional']
+            else CuDNNLSTM(
+                cfg['rnn_size'], return_sequences=True, name=f'rnn_{layer_num}'
+            )
+        )
 
-        return CuDNNLSTM(cfg['rnn_size'],
-                         return_sequences=True,
-                         name='rnn_{}'.format(layer_num))
-    else:
-        if cfg['rnn_bidirectional']:
-            return Bidirectional(LSTM(cfg['rnn_size'],
-                                      return_sequences=True,
-                                      recurrent_activation='sigmoid'),
-                                 name='rnn_{}'.format(layer_num))
+    if cfg['rnn_bidirectional']:
+        return Bidirectional(
+            LSTM(
+                cfg['rnn_size'],
+                return_sequences=True,
+                recurrent_activation='sigmoid',
+            ),
+            name=f'rnn_{layer_num}',
+        )
 
-        return LSTM(cfg['rnn_size'],
-                    return_sequences=True,
-                    recurrent_activation='sigmoid',
-                    name='rnn_{}'.format(layer_num))
+
+    return LSTM(
+        cfg['rnn_size'],
+        return_sequences=True,
+        recurrent_activation='sigmoid',
+        name=f'rnn_{layer_num}',
+    )

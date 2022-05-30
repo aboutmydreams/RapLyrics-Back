@@ -6,10 +6,7 @@ import random
 
 
 def text_cleaner(text):
-    regex_patterns = []
-    regex_patterns.append(("\n ", "\n"))  # space at beginning of line
-    regex_patterns.append(("\n{2,}", "\n"))  # multiple newlines
-    regex_patterns.append(("i ' m", "i'm"))  # i ' m -->i'm
+    regex_patterns = [("\n ", "\n"), ("\n{2,}", "\n"), ("i ' m", "i'm")]
     for (p, r) in regex_patterns:
         text = re.sub(re.compile(p), r, text)
 
@@ -52,7 +49,7 @@ def front_generator_old(prefix, temperatures=[0.4,0.5,0.6], num_line=10, full_me
     temperature = random.choice(temperatures) if varying_temperatures else 0.5
     line_list = textgen.generate(prefix=prefix, return_as_list=True, n=1, temperature=temperature)
 
-    for i in range(num_line -1):
+    for _ in range(num_line -1):
         #get last line as a space separated list
         if full_memory:
             prefix = line_list[-1]
